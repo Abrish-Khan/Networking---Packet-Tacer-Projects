@@ -1,0 +1,106 @@
+______________________________________________________
+-----Switch Configuration
+______________________________________________________
+
+en
+conf t
+
+! 🔹 VLANs create
+vlan 10
+name Admin
+exit
+
+vlan 20
+name HR
+exit
+
+vlan 30
+name Finance
+exit
+
+! 🔹 Access ports 
+
+interface range fa0/2 - 4
+switchport mode access
+switchport access vlan 10
+exit
+
+interface range fa0/5 - 7
+switchport mode access
+switchport access vlan 20
+exit
+
+interface range fa0/8 - 10
+switchport mode access
+switchport access vlan 30
+exit
+
+! 🔹 Trunk port 
+
+interface fa0/1
+switchport mode trunk
+exit
+
+_________________________________________________
+--------------ROUTER Configuration
+_________________________________________________
+
+en
+conf t
+
+! 🔹 Physical interface ON 
+interface fa0/0
+no shutdown
+exit
+
+! 🔹 VLAN 10
+interface fa0/0.10
+encapsulation dot1Q 10
+ip address 192.168.1.1 255.255.255.192
+exit
+
+! 🔹 VLAN 20
+interface fa0/0.20
+encapsulation dot1Q 20
+ip address 192.168.1.65 255.255.255.192
+exit
+
+! 🔹 VLAN 30
+interface fa0/0.30
+encapsulation dot1Q 30
+ip address 192.168.1.129 255.255.255.192
+exit
+
+! =========================
+! 🔥 DHCP CONFIGURATION
+! =========================
+
+! (optional but good practice)
+ip dhcp excluded-address 192.168.1.1
+ip dhcp excluded-address 192.168.1.65
+ip dhcp excluded-address 192.168.1.129
+
+! 🔹 VLAN 10 DHCP
+ip dhcp pool VLAN10
+network 192.168.1.0 255.255.255.192
+default-router 192.168.1.1
+domain name Admin.com 
+exit
+
+! 🔹 VLAN 20 DHCP
+ip dhcp pool VLAN20
+network 192.168.1.64 255.255.255.192
+default-router 192.168.1.65
+domain name Hr.com
+exit
+
+! 🔹 VLAN 30 DHCP
+ip dhcp pool VLAN30
+network 192.168.1.128 255.255.255.192
+default-router 192.168.1.129
+domain name Finance.com
+exit
+
+
+end
+write memory
